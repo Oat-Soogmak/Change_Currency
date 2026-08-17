@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change currency</title>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --danger-color: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Prompt', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 480px;
+            padding: 28px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .header h2 {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 6px;
+        }
+
+        /* โจทย์ที่ 4: เวลาอัปเดต */
+        .last-update {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .converter-card {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-group label {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            padding: 4px 12px;
+            transition: border-color 0.2s;
+            background: #fff;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--primary-color);
+        }
+
+        .input-wrapper input {
+            border: none;
+            outline: none;
+            width: 100%;
+            padding: 10px 0;
+            font-size: 1.1rem;
+            background: transparent;
+        }
+
+        /* ตกแต่งส่วนแสดงผลธงชาติ + เลือกสกุลเงิน */
+        .select-box {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f9fafb;
+            padding: 4px 8px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .flag-img {
+            width: 24px;
+            height: 18px;
+            object-fit: cover;
+            border-radius: 3px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .select-box select {
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .exchange-rate-badge {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--primary-color);
+            background: #e0e7ff;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            margin: 4px 0;
+        }
+
+        /* โจทย์ที่ 3: ปุ่มล้างข้อมูล */
+        .btn-clear {
+            background-color: transparent;
+            border: 1.5px solid var(--danger-color);
+            color: var(--danger-color);
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-clear:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        /* โจทย์ที่ 2: ประวัติการแปลงเงิน */
+        .history-section {
+            margin-top: 24px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .history-header h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .btn-clear-history {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .btn-clear-history:hover {
+            color: var(--danger-color);
+        }
+
+        .history-list {
+            list-style: none;
+            max-height: 180px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .history-list li {
+            font-size: 0.85rem;
+            background: #f9fafb;
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-color);
+        }
+
+        .empty-history {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            padding: 12px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2><i class="fa-solid fa-coins"></i> แปลงสกุลเงิน</h2>
+        <!-- โจทย์ที่ 4: เวลาอัปเดตล่าสุด -->
+        <div class="last-update" id="last-update">
+            <i class="fa-regular fa-clock"></i> กำลังโหลดข้อมูล...
+        </div>
+    </div>
+
+    <div class="converter-card">
+        <!-- ช่องกรอกต้นทาง (amount-one) -->
+        <div class="input-group">
+            <label>จำนวนเงิน (ต้นทาง)</label>
+            <div class="input-wrapper">
+                <input type="number" id="amount-one" placeholder="0.00">
+                <div class="select-box">
+                    <img id="flag-one" class="flag-img" src="https://flagcdn.com/w40/th.png" alt="Flag">
+                    <select id="currency-one"></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="exchange-rate-badge" id="rate-info">
+            1 THB = ...
+        </div>
+
+        <!-- โจทย์ที่ 1: สองทิศทาง (amount-two) -->
+        <div class="input-group">
+            <label>จำนวนเงิน (ปลายทาง)</label>
+            <div class="input-wrapper">
+                <input type="number" id="amount-two" placeholder="0.00">
+                <div class="select-box">
+                    <img id="flag-two" class="flag-img" src="https://flagcdn.com/w40/us.png" alt="Flag">
+                    <select id="currency-two"></select>
+                </div>
+            </div>
+        </div>
+
+        <!-- โจทย์ที่ 3: ปุ่มล้างข้อมูล -->
+        <button class="btn-clear" onclick="clearInputs()">
+            <i class="fa-solid fa-rotate-left"></i> ล้างข้อมูล
+        </button>
+    </div>
+
+    <!-- โจทย์ที่ 2: ประวัติการแปลงเงิน -->
+    <div class="history-section">
+        <div class="history-header">
+            <h4><i class="fa-solid fa-history"></i> ประวัติ 10 รายการล่าสุด</h4>
+            <button class="btn-clear-history" onclick="clearHistory()">ล้างประวัติ</button>
+        </div>
+        <ul class="history-list" id="history-list">
+            <div class="empty-history">ยังไม่มีประวัติการทำรายการ</div>
+        </ul>
+    </div>
+</div>
+
+<script>
+    const amountOne = document.getElementById('amount-one');
+    const currencyOne = document.getElementById('currency-one');
+    const flagOne = document.getElementById('flag-one');
+    const amountTwo = document.getElementById('amount-two');
+    const currencyTwo = document.getElementById('currency-two');
+    const flagTwo = document.getElementById('flag-two');
+    const rateInfo = document.getElementById('rate-info');
+    const lastUpdateText = document.getElementById('last-update');
+    const historyList = document.getElementById('history-list');
+
+    let ratesData = {};
+    let historyData = [];
+
+    // ดึงข้อมูลอัตราแลกเปลี่ยนแบบ Real-time
+    async function fetchExchangeRates() {
+        try {
+            const response = await fetch('https://open.er-api.com/v6/latest/THB');
+            const data = await response.json();
+            
+            ratesData = data.rates;
+            
+            // โจทย์ที่ 4: แสดงเวลาที่อัปเดตล่าสุด
+            const lastUpdateDate = new Date(data.time_last_update_utc);
+            lastUpdateText.innerHTML = `<i class="fa-regular fa-clock"></i> อัปเดตล่าสุด: ${lastUpdateDate.toLocaleTimeString('th-TH')} น.`;
+
+            populateCurrencySelects();
+        } catch (error) {
+            lastUpdateText.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ไม่สามารถดึงข้อมูลอัตราแลกเปลี่ยนได้`;
+        }
+    }
+
+    // เพิ่มรายชื่อสกุลเงินลงใน Dropdown
+    function populateCurrencySelects() {
+        const currencies = Object.keys(ratesData);
+        let options = '';
+
+        currencies.forEach(currency => {
+            options += `<option value="${currency}">${currency}</option>`;
+        });
+
+        currencyOne.innerHTML = options;
+        currencyTwo.innerHTML = options;
+
+        // ค่าเริ่มต้น (THB -> USD)
+        currencyOne.value = 'THB';
+        currencyTwo.value = 'USD';
+
+        updateFlags();
+        updateRates();
+    }
+
+    // แปลงรหัสสกุลเงิน (Currency Code) เป็นรหัสประเทศ (Country Code) เพื่อดึงรูปธง
+    function getCountryCode(currencyCode) {
+        // กรณียกเว้นที่รหัสสกุลเงินไม่ตรงกับรหัสประเทศ
+        const specialCases = {
+            'EUR': 'eu', 'USD': 'us', 'GBP': 'gb', 'JPY': 'jp',
+            'AUD': 'au', 'CAD': 'ca', 'CHF': 'ch', 'CNY': 'cn',
+            'HKD': 'hk', 'NZD': 'nz', 'SEK': 'se', 'KRW': 'kr',
+            'SGD': 'sg', 'NOK': 'no', 'MXN': 'mx', 'INR': 'in',
+            'RUB': 'ru', 'BRL': 'br', 'ZAR': 'za', 'BTC': 'un'
+        };
+
+        if (specialCases[currencyCode]) {
+            return specialCases[currencyCode];
+        }
+        // โดยทั่วไปใช้ 2 อักษรแรกของสกุลเงิน (เช่น THB -> th, DKK -> dk)
+        return currencyCode.substring(0, 2).toLowerCase();
+    }
+
+    // อัปเดตรูปธงชาติ
+    function updateFlags() {
+        const codeOne = getCountryCode(currencyOne.value);
+        const codeTwo = getCountryCode(currencyTwo.value);
+
+        flagOne.src = `https://flagcdn.com/w40/${codeOne}.png`;
+        flagTwo.src = `https://flagcdn.com/w40/${codeTwo}.png`;
+    }
+
+    // คำนวณอัตราแลกเปลี่ยน
+    function updateRates() {
+        const from = currencyOne.value;
+        const to = currencyTwo.value;
+
+        const rate = ratesData[to] / ratesData[from];
+        rateInfo.innerText = `1 ${from} = ${rate.toFixed(4)} ${to}`;
+
+        return rate;
+    }
+
+    // โจทย์ที่ 1: คำนวณจาก ต้นทาง -> ปลายทาง
+    amountOne.addEventListener('input', () => {
+        const rate = updateRates();
+        const val = parseFloat(amountOne.value);
+
+        if (!isNaN(val) && val >= 0) {
+            const result = (val * rate).toFixed(2);
+            amountTwo.value = result;
+            addHistory(`${val.toLocaleString()} ${currencyOne.value} → ${result} ${currencyTwo.value}`);
+        } else {
+            amountTwo.value = '';
+        }
+    });
+
+    // โจทย์ที่ 1: คำนวณย้อนกลับ ปลายทาง -> ต้นทาง
+    amountTwo.addEventListener('input', () => {
+        const rate = updateRates();
+        const val = parseFloat(amountTwo.value);
+
+        if (!isNaN(val) && val >= 0) {
+            const result = (val / rate).toFixed(2);
+            amountOne.value = result;
+            addHistory(`${result} ${currencyOne.value} ← ${val.toLocaleString()} ${currencyTwo.value}`);
+        } else {
+            amountOne.value = '';
+        }
+    });
+
+    // เปลี่ยนสกุลเงิน
+    currencyOne.addEventListener('change', () => {
+        updateFlags();
+        amountOne.dispatchEvent(new Event('input'));
+    });
+    
+    currencyTwo.addEventListener('change', () => {
+        updateFlags();
+        amountOne.dispatchEvent(new Event('input'));
+    });
+
+    // โจทย์ที่ 2: บันทึกประวัติ (ไม่เกิน 10 รายการ)
+    function addHistory(record) {
+        historyData.unshift({ record, time: new Date().toLocaleTimeString('th-TH') });
+        if (historyData.length > 10) {
+            historyData.pop();
+        }
+        renderHistory();
+    }
+
+    function renderHistory() {
+        if (historyData.length === 0) {
+            historyList.innerHTML = '<div class="empty-history">ยังไม่มีประวัติการทำรายการ</div>';
+            return;
+        }
+
+        historyList.innerHTML = historyData.map(item => `
+            <li>
+                <span>${item.record}</span>
+                <span style="color: var(--text-muted); font-size: 0.75rem;">${item.time}</span>
+            </li>
+        `).join('');
+    }
+
+    function clearHistory() {
+        historyData = [];
+        renderHistory();
+    }
+
+    // โจทย์ที่ 3: ปุ่มล้างข้อมูล
+    function clearInputs() {
+        amountOne.value = '';
+        amountTwo.value = '';
+        currencyOne.value = 'THB';
+        currencyTwo.value = 'USD';
+        updateFlags();
+        updateRates();
+    }
+
+    // เริ่มต้นทำงาน
+    fetchExchangeRates();
+</script>
+
+</body>
+</html>
